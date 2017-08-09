@@ -1,0 +1,569 @@
+// JSFX-CookDSP - butbp - manual example
+// (c) Olivier Belanger - 2017 - belangeo@gmail.com
+
+desc:Brute Force Key Changer
+
+import cookdsp.jsfx-inc
+
+slider1:5<1,100>Filter Q
+slider2:5<0,11,1{Db,Ab,Eb,Bb,F,C,G,D,A,E,B,F#}>Starting key
+slider3:0<0,1,1{No,Yes}>Minor?
+slider4:5<0,11,1{Db,Ab,Eb,Bb,F,C,G,D,A,E,B,F#}>Target key
+slider5:0<0,1,1{No,Yes}>Minor?
+slider6:0<-6,6,1>Transpose (semitones)
+
+@init
+initoffseta = 0;
+initoffsetb = 0;
+initoffsetc = 0;
+initoffsetd = 0;
+initoffsete = 0;
+initoffsetf = 0;
+initoffsetg = 0;
+slider2 > 5 ? initoffsetf = 1;
+slider2 > 6 ? initoffsetc = 1;
+slider2 > 7 ? initoffsetg = 1;
+slider2 > 8 ? initoffsetd = 1;
+slider2 > 9 ? initoffseta = 1;
+slider2 > 10 ? initoffsete = 1;
+slider2 < 5 ? initoffsetb = -1;
+slider2 < 4 ? initoffsete = -1;
+slider2 < 3 ? initoffseta = -1;
+slider2 < 2 ? initoffsetd = -1;
+slider2 < 1 ? initoffsetg = -1;
+
+slider3 > 0 ? (
+  slider2 == 0 ? (
+    initoffsetb -= 1;
+    initoffsetf -= 1;
+  );
+  slider2 == 1 ? (
+    initoffsetf -= 1;
+    initoffsetc -= 1;
+  );
+  slider2 == 2 ? (
+    initoffsetc -= 1;
+    initoffsetg -= 1;
+  );
+  slider2 == 3 ? (
+    initoffsetg -= 1;
+    initoffsetd -= 1;
+  );
+  slider2 == 4 ? (
+    initoffsetd -= 1;
+    initoffseta -= 1;
+  );
+  slider2 == 5 ? (
+    initoffseta -= 1;
+    initoffsete -= 1;
+  );
+  slider2 == 6 ? (
+    initoffsete -= 1;
+    initoffsetb -= 1;
+  );
+  slider2 == 7 ? (
+    initoffsetb -= 1;
+    initoffsetf -= 1;
+  );
+  slider2 == 8 ? (
+    initoffsetf -= 1;
+    initoffsetc -= 1;
+  );
+  slider2 == 9 ? (
+    initoffsetc -= 1;
+    initoffsetg -= 1;
+  );
+  slider2 == 10 ? (
+    initoffsetg -= 1;
+    initoffsetd -= 1;
+  );
+  slider2 == 11 ? (
+    initoffsetd -= 1;
+    initoffseta -= 1;
+  );
+);
+targetkey = (216 + slider4 + (slider6*5)) % 12;
+
+finaloffseta = 0;
+finaloffsetb = 0;
+finaloffsetc = 0;
+finaloffsetd = 0;
+finaloffsete = 0;
+finaloffsetf = 0;
+finaloffsetg = 0;
+
+targetkey > 5 ? finaloffsetf = 1;
+targetkey > 6 ? finaloffsetc = 1;
+targetkey > 7 ? finaloffsetg = 1;
+targetkey > 8 ? finaloffsetd = 1;
+targetkey > 9 ? finaloffseta = 1;
+targetkey > 10 ? finaloffsete = 1;
+targetkey < 5 ? finaloffsetb = -1;
+targetkey < 4 ? finaloffsete = -1;
+targetkey < 3 ? finaloffseta = -1;
+targetkey < 2 ? finaloffsetd = -1;
+targetkey < 1 ? finaloffsetg = -1;
+
+slider5 > 0 ? (
+  targetkey == 0 ? (
+    finaloffsetb -= 1;
+    finaloffsetf -= 1;
+  );
+  targetkey == 1 ? (
+    finaloffsetf -= 1;
+    finaloffsetc -= 1;
+  );
+  targetkey == 2 ? (
+    finaloffsetc -= 1;
+    finaloffsetg -= 1;
+  );
+  targetkey == 3 ? (
+    finaloffsetg -= 1;
+    finaloffsetd -= 1;
+  );
+  targetkey == 4 ? (
+    finaloffsetd -= 1;
+    finaloffseta -= 1;
+  );
+  targetkey == 5 ? (
+    finaloffseta -= 1;
+    finaloffsete -= 1;
+  );
+  targetkey == 6 ? (
+    finaloffsete -= 1;
+    finaloffsetb -= 1;
+  );
+  targetkey == 7 ? (
+    finaloffsetb -= 1;
+    finaloffsetf -= 1;
+  );
+  targetkey == 8 ? (
+    finaloffsetf -= 1;
+    finaloffsetc -= 1;
+  );
+  targetkey == 9 ? (
+    finaloffsetc -= 1;
+    finaloffsetg -= 1;
+  );
+  targetkey == 10 ? (
+    finaloffsetg -= 1;
+    finaloffsetd -= 1;
+  );
+  targetkey == 11 ? (
+    finaloffsetd -= 1;
+    finaloffseta -= 1;
+  );
+);
+
+size = 2^10;
+olaps = 4;
+
+apin.pvin(size, olaps);
+apout.pvout(size, olaps);
+apvt.pvtrans(2^((initoffseta-finaloffseta+slider6)/12), size/2);
+
+bpin.pvin(size, olaps);
+bpout.pvout(size, olaps);
+bpvt.pvtrans(2^((initoffsetb-finaloffsetb+slider6)/12), size/2);
+
+cpin.pvin(size, olaps);
+cpout.pvout(size, olaps);
+cpvt.pvtrans(2^((initoffsetc-finaloffsetc+slider6)/12), size/2);
+
+dpin.pvin(size, olaps);
+dpout.pvout(size, olaps);
+dpvt.pvtrans(2^((initoffsetd-finaloffsetd+slider6)/12), size/2);
+
+epin.pvin(size, olaps);
+epout.pvout(size, olaps);
+epvt.pvtrans(2^((initoffsete-finaloffsete+slider6)/12), size/2);
+
+fpin.pvin(size, olaps);
+fpout.pvout(size, olaps);
+fpvt.pvtrans(2^((initoffsetf-finaloffsetf+slider6)/12), size/2);
+
+gpin.pvin(size, olaps);
+gpout.pvout(size, olaps);
+gpvt.pvtrans(2^((initoffsetg-finaloffsetg+slider6)/12), size/2);
+
+lowpass.lop(55*2^(-2/12));
+// Initializes the filter
+filtA0.butbp(55*2^((0+initoffseta)/12), slider1);
+filtB0.butbp(55*2^((2+initoffsetb)/12), slider1);
+filtC0.butbp(55*2^((3+initoffsetc)/12), slider1);
+filtD0.butbp(55*2^((5+initoffsetd)/12), slider1);
+filtE0.butbp(55*2^((7+initoffsete)/12), slider1);
+filtF0.butbp(55*2^((8+initoffsetf)/12), slider1);
+filtG0.butbp(55*2^((10+initoffsetg)/12), slider1);
+
+filtA1.butbp(110*2^((0+initoffseta)/12), slider1);
+filtB1.butbp(110*2^((2+initoffsetb)/12), slider1);
+filtC1.butbp(110*2^((3+initoffsetc)/12), slider1);
+filtD1.butbp(110*2^((5+initoffsetd)/12), slider1);
+filtE1.butbp(110*2^((7+initoffsete)/12), slider1);
+filtF1.butbp(110*2^((8+initoffsetf)/12), slider1);
+filtG1.butbp(110*2^((10+initoffsetg)/12), slider1);
+
+filtA2.butbp(220*2^((0+initoffseta)/12), slider1);
+filtB2.butbp(220*2^((2+initoffsetb)/12), slider1);
+filtC2.butbp(220*2^((3+initoffsetc)/12), slider1);
+filtD2.butbp(220*2^((5+initoffsetd)/12), slider1);
+filtE2.butbp(220*2^((7+initoffsete)/12), slider1);
+filtF2.butbp(220*2^((8+initoffsetf)/12), slider1);
+filtG2.butbp(220*2^((10+initoffsetg)/12), slider1);
+
+filtA3.butbp(440*2^((0+initoffseta)/12), slider1);
+filtB3.butbp(440*2^((2+initoffsetb)/12), slider1);
+filtC3.butbp(440*2^((3+initoffsetc)/12), slider1);
+filtD3.butbp(440*2^((5+initoffsetd)/12), slider1);
+filtE3.butbp(440*2^((7+initoffsete)/12), slider1);
+filtF3.butbp(440*2^((8+initoffsetf)/12), slider1);
+filtG3.butbp(440*2^((10+initoffsetg)/12), slider1);
+
+filtA4.butbp(880*2^((0+initoffseta)/12), slider1);
+filtB4.butbp(880*2^((2+initoffsetb)/12), slider1);
+filtC4.butbp(880*2^((3+initoffsetc)/12), slider1);
+filtD4.butbp(880*2^((5+initoffsetd)/12), slider1);
+filtE4.butbp(880*2^((7+initoffsete)/12), slider1);
+filtF4.butbp(880*2^((8+initoffsetf)/12), slider1);
+filtG4.butbp(880*2^((10+initoffsetg)/12), slider1);
+
+filtA5.butbp(1760*2^((0+initoffseta)/12), slider1);
+filtB5.butbp(1760*2^((2+initoffsetb)/12), slider1);
+filtC5.butbp(1760*2^((3+initoffsetc)/12), slider1);
+filtD5.butbp(1760*2^((5+initoffsetd)/12), slider1);
+filtE5.butbp(1760*2^((7+initoffsete)/12), slider1);
+filtF5.butbp(1760*2^((8+initoffsetf)/12), slider1);
+filtG5.butbp(1760*2^((10+initoffsetg)/12), slider1);
+
+filtA6.butbp(3520*2^((0+initoffseta)/12), slider1);
+filtB6.butbp(3520*2^((2+initoffsetb)/12), slider1);
+filtC6.butbp(3520*2^((3+initoffsetc)/12), slider1);
+filtD6.butbp(3520*2^((5+initoffsetd)/12), slider1);
+filtE6.butbp(3520*2^((7+initoffsete)/12), slider1);
+filtF6.butbp(3520*2^((8+initoffsetf)/12), slider1);
+filtG6.butbp(3520*2^((10+initoffsetg)/12), slider1);
+
+filtA7.butbp(7040*2^((0+initoffseta)/12), slider1);
+filtB7.butbp(7040*2^((2+initoffsetb)/12), slider1);
+filtC7.butbp(7040*2^((3+initoffsetc)/12), slider1);
+filtD7.butbp(7040*2^((5+initoffsetd)/12), slider1);
+filtE7.butbp(7040*2^((7+initoffsete)/12), slider1);
+filtF7.butbp(7040*2^((8+initoffsetf)/12), slider1);
+filtG7.butbp(7040*2^((10+initoffsetg)/12), slider1);
+
+hipass.hip(14080)
+
+@slider
+initoffseta = 0;
+initoffsetb = 0;
+initoffsetc = 0;
+initoffsetd = 0;
+initoffsete = 0;
+initoffsetf = 0;
+initoffsetg = 0;
+slider2 > 5 ? initoffsetf = 1;
+slider2 > 6 ? initoffsetc = 1;
+slider2 > 7 ? initoffsetg = 1;
+slider2 > 8 ? initoffsetd = 1;
+slider2 > 9 ? initoffseta = 1;
+slider2 > 10 ? initoffsete = 1;
+slider2 < 5 ? initoffsetb = -1;
+slider2 < 4 ? initoffsete = -1;
+slider2 < 3 ? initoffseta = -1;
+slider2 < 2 ? initoffsetd = -1;
+slider2 < 1 ? initoffsetg = -1;
+
+slider3 > 0 ? (
+  slider2 == 0 ? (
+    initoffsetb -= 1;
+    initoffsetf -= 1;
+  );
+  slider2 == 1 ? (
+    initoffsetf -= 1;
+    initoffsetc -= 1;
+  );
+  slider2 == 2 ? (
+    initoffsetc -= 1;
+    initoffsetg -= 1;
+  );
+  slider2 == 3 ? (
+    initoffsetg -= 1;
+    initoffsetd -= 1;
+  );
+  slider2 == 4 ? (
+    initoffsetd -= 1;
+    initoffseta -= 1;
+  );
+  slider2 == 5 ? (
+    initoffseta -= 1;
+    initoffsete -= 1;
+  );
+  slider2 == 6 ? (
+    initoffsete -= 1;
+    initoffsetb -= 1;
+  );
+  slider2 == 7 ? (
+    initoffsetb -= 1;
+    initoffsetf -= 1;
+  );
+  slider2 == 8 ? (
+    initoffsetf -= 1;
+    initoffsetc -= 1;
+  );
+  slider2 == 9 ? (
+    initoffsetc -= 1;
+    initoffsetg -= 1;
+  );
+  slider2 == 10 ? (
+    initoffsetg -= 1;
+    initoffsetd -= 1;
+  );
+  slider2 == 11 ? (
+    initoffsetd -= 1;
+    initoffseta -= 1;
+  );
+);
+targetkey = (216 + slider4 + (slider6*5)) % 12;
+finaloffseta = 0;
+finaloffsetb = 0;
+finaloffsetc = 0;
+finaloffsetd = 0;
+finaloffsete = 0;
+finaloffsetf = 0;
+finaloffsetg = 0;
+targetkey > 5 ? finaloffsetf = 1;
+targetkey > 6 ? finaloffsetc = 1;
+targetkey > 7 ? finaloffsetg = 1;
+targetkey > 8 ? finaloffsetd = 1;
+targetkey > 9 ? finaloffseta = 1;
+targetkey > 10 ? finaloffsete = 1;
+targetkey < 5 ? finaloffsetb = -1;
+targetkey < 4 ? finaloffsete = -1;
+targetkey < 3 ? finaloffseta = -1;
+targetkey < 2 ? finaloffsetd = -1;
+targetkey < 1 ? finaloffsetg = -1;
+
+slider5 > 0 ? (
+  targetkey == 0 ? (
+    finaloffsetb -= 1;
+    finaloffsetf -= 1;
+  );
+  targetkey == 1 ? (
+    finaloffsetf -= 1;
+    finaloffsetc -= 1;
+  );
+  targetkey == 2 ? (
+    finaloffsetc -= 1;
+    finaloffsetg -= 1;
+  );
+  targetkey == 3 ? (
+    finaloffsetg -= 1;
+    finaloffsetd -= 1;
+  );
+  targetkey == 4 ? (
+    finaloffsetd -= 1;
+    finaloffseta -= 1;
+  );
+  targetkey == 5 ? (
+    finaloffseta -= 1;
+    finaloffsete -= 1;
+  );
+  targetkey == 6 ? (
+    finaloffsete -= 1;
+    finaloffsetb -= 1;
+  );
+  targetkey == 7 ? (
+    finaloffsetb -= 1;
+    finaloffsetf -= 1;
+  );
+  targetkey == 8 ? (
+    finaloffsetf -= 1;
+    finaloffsetc -= 1;
+  );
+  targetkey == 9 ? (
+    finaloffsetc -= 1;
+    finaloffsetg -= 1;
+  );
+  targetkey == 10 ? (
+    finaloffsetg -= 1;
+    finaloffsetd -= 1;
+  );
+  targetkey == 11 ? (
+    finaloffsetd -= 1;
+    finaloffseta -= 1;
+  );
+);
+
+apvt.pvtrans_set_transpo(2^((initoffseta-finaloffseta+slider6)/12));
+bpvt.pvtrans_set_transpo(2^((initoffsetb-finaloffsetb+slider6)/12));
+cpvt.pvtrans_set_transpo(2^((initoffsetc-finaloffsetc+slider6)/12));
+dpvt.pvtrans_set_transpo(2^((initoffsetd-finaloffsetd+slider6)/12));
+epvt.pvtrans_set_transpo(2^((initoffsete-finaloffsete+slider6)/12));
+fpvt.pvtrans_set_transpo(2^((initoffsetf-finaloffsetf+slider6)/12));
+gpvt.pvtrans_set_transpo(2^((initoffsetg-finaloffsetg+slider6)/12));
+
+filtA0.butbp_set_freq(55*2^((0+initoffseta)/12));
+filtA0.butbp_set_q(slider1);
+filtB0.butbp_set_freq(55*2^((2+initoffsetb)/12));
+filtB0.butbp_set_q(slider1);
+filtC0.butbp_set_freq(55*2^((3+initoffsetc)/12));
+filtC0.butbp_set_q(slider1);
+filtD0.butbp_set_freq(55*2^((5+initoffsetd)/12));
+filtD0.butbp_set_q(slider1);
+filtE0.butbp_set_freq(55*2^((7+initoffsete)/12));
+filtE0.butbp_set_q(slider1);
+filtF0.butbp_set_freq(55*2^((8+initoffsetf)/12));
+filtF0.butbp_set_q(slider1);
+filtG0.butbp_set_freq(55*2^((10+initoffsetg)/12));
+filtG0.butbp_set_q(slider1);
+
+filtA1.butbp_set_freq(110*2^((0+initoffseta)/12));
+filtA1.butbp_set_q(slider1);
+filtB1.butbp_set_freq(110*2^((2+initoffsetb)/12));
+filtB1.butbp_set_q(slider1);
+filtC1.butbp_set_freq(110*2^((3+initoffsetc)/12));
+filtC1.butbp_set_q(slider1);
+filtD1.butbp_set_freq(110*2^((5+initoffsetd)/12));
+filtD1.butbp_set_q(slider1);
+filtE1.butbp_set_freq(110*2^((7+initoffsete)/12));
+filtE1.butbp_set_q(slider1);
+filtF1.butbp_set_freq(110*2^((8+initoffsetf)/12));
+filtF1.butbp_set_q(slider1);
+filtG1.butbp_set_freq(110*2^((10+initoffsetg)/12));
+filtG1.butbp_set_q(slider1);
+
+filtA2.butbp_set_freq(220*2^((0+initoffseta)/12));
+filtA2.butbp_set_q(slider1);
+filtB2.butbp_set_freq(220*2^((2+initoffsetb)/12));
+filtB2.butbp_set_q(slider1);
+filtC2.butbp_set_freq(220*2^((3+initoffsetc)/12));
+filtC2.butbp_set_q(slider1);
+filtD2.butbp_set_freq(220*2^((5+initoffsetd)/12));
+filtD2.butbp_set_q(slider1);
+filtE2.butbp_set_freq(220*2^((7+initoffsete)/12));
+filtE2.butbp_set_q(slider1);
+filtF2.butbp_set_freq(220*2^((8+initoffsetf)/12));
+filtF2.butbp_set_q(slider1);
+filtG2.butbp_set_freq(220*2^((10+initoffsetg)/12));
+filtG2.butbp_set_q(slider1);
+
+filtA3.butbp_set_freq(440*2^((0+initoffseta)/12));
+filtA3.butbp_set_q(slider1);
+filtB3.butbp_set_freq(440*2^((2+initoffsetb)/12));
+filtB3.butbp_set_q(slider1);
+filtC3.butbp_set_freq(440*2^((3+initoffsetc)/12));
+filtC3.butbp_set_q(slider1);
+filtD3.butbp_set_freq(440*2^((5+initoffsetd)/12));
+filtD3.butbp_set_q(slider1);
+filtE3.butbp_set_freq(440*2^((7+initoffsete)/12));
+filtE3.butbp_set_q(slider1);
+filtF3.butbp_set_freq(440*2^((8+initoffsetf)/12));
+filtF3.butbp_set_q(slider1);
+filtG3.butbp_set_freq(440*2^((10+initoffsetg)/12));
+filtG3.butbp_set_q(slider1);
+
+filtA4.butbp_set_freq(880*2^((0+initoffseta)/12));
+filtA4.butbp_set_q(slider1);
+filtB4.butbp_set_freq(880*2^((2+initoffsetb)/12));
+filtB4.butbp_set_q(slider1);
+filtC4.butbp_set_freq(880*2^((3+initoffsetc)/12));
+filtC4.butbp_set_q(slider1);
+filtD4.butbp_set_freq(880*2^((5+initoffsetd)/12));
+filtD4.butbp_set_q(slider1);
+filtE4.butbp_set_freq(880*2^((7+initoffsete)/12));
+filtE4.butbp_set_q(slider1);
+filtF4.butbp_set_freq(880*2^((8+initoffsetf)/12));
+filtF4.butbp_set_q(slider1);
+filtG4.butbp_set_freq(880*2^((10+initoffsetg)/12));
+filtG4.butbp_set_q(slider1);
+
+filtA5.butbp_set_freq(1760*2^((0+initoffseta)/12));
+filtA5.butbp_set_q(slider1);
+filtB5.butbp_set_freq(1760*2^((2+initoffsetb)/12));
+filtB5.butbp_set_q(slider1);
+filtC5.butbp_set_freq(1760*2^((3+initoffsetc)/12));
+filtC5.butbp_set_q(slider1);
+filtD5.butbp_set_freq(1760*2^((5+initoffsetd)/12));
+filtD5.butbp_set_q(slider1);
+filtE5.butbp_set_freq(1760*2^((7+initoffsete)/12));
+filtE5.butbp_set_q(slider1);
+filtF5.butbp_set_freq(1760*2^((8+initoffsetf)/12));
+filtF5.butbp_set_q(slider1);
+filtG5.butbp_set_freq(1760*2^((10+initoffsetg)/12));
+filtG5.butbp_set_q(slider1);
+
+filtA6.butbp_set_freq(3520*2^((0+initoffseta)/12));
+filtA6.butbp_set_q(slider1);
+filtB6.butbp_set_freq(3520*2^((2+initoffsetb)/12));
+filtB6.butbp_set_q(slider1);
+filtC6.butbp_set_freq(3520*2^((3+initoffsetc)/12));
+filtC6.butbp_set_q(slider1);
+filtD6.butbp_set_freq(3520*2^((5+initoffsetd)/12));
+filtD6.butbp_set_q(slider1);
+filtE6.butbp_set_freq(3520*2^((7+initoffsete)/12));
+filtE6.butbp_set_q(slider1);
+filtF6.butbp_set_freq(3520*2^((8+initoffsetf)/12));
+filtF6.butbp_set_q(slider1);
+filtG6.butbp_set_freq(3520*2^((10+initoffsetg)/12));
+filtG6.butbp_set_q(slider1);
+
+filtA7.butbp_set_freq(7040*2^((0+initoffseta)/12));
+filtA7.butbp_set_q(slider1);
+filtB7.butbp_set_freq(7040*2^((2+initoffsetb)/12));
+filtB7.butbp_set_q(slider1);
+filtC7.butbp_set_freq(7040*2^((3+initoffsetc)/12));
+filtC7.butbp_set_q(slider1);
+filtD7.butbp_set_freq(7040*2^((5+initoffsetd)/12));
+filtD7.butbp_set_q(slider1);
+filtE7.butbp_set_freq(7040*2^((7+initoffsete)/12));
+filtE7.butbp_set_q(slider1);
+filtF7.butbp_set_freq(7040*2^((8+initoffsetf)/12));
+filtF7.butbp_set_q(slider1);
+filtG7.butbp_set_freq(7040*2^((10+initoffsetg)/12));
+filtG7.butbp_set_q(slider1);
+
+@sample
+// Filters the input signal
+spl0 = spl0 + spl1;
+a = filtA0.butbp_do(spl0) + filtA1.butbp_do(spl0) + filtA2.butbp_do(spl0) + filtA3.butbp_do(spl0) + filtA4.butbp_do(spl0) + filtA5.butbp_do(spl0) + filtA6.butbp_do(spl0) + filtA7.butbp_do(spl0);
+b = filtB0.butbp_do(spl0) + filtB1.butbp_do(spl0) + filtB2.butbp_do(spl0) + filtB3.butbp_do(spl0) + filtB4.butbp_do(spl0) + filtB5.butbp_do(spl0) + filtB6.butbp_do(spl0) + filtB7.butbp_do(spl0);
+c = filtC0.butbp_do(spl0) + filtC1.butbp_do(spl0) + filtC2.butbp_do(spl0) + filtC3.butbp_do(spl0) + filtC4.butbp_do(spl0) + filtC5.butbp_do(spl0) + filtC6.butbp_do(spl0) + filtC7.butbp_do(spl0);
+d = filtD0.butbp_do(spl0) + filtD1.butbp_do(spl0) + filtD2.butbp_do(spl0) + filtD3.butbp_do(spl0) + filtD4.butbp_do(spl0) + filtD5.butbp_do(spl0) + filtD6.butbp_do(spl0) + filtD7.butbp_do(spl0);
+e = filtE0.butbp_do(spl0) + filtE1.butbp_do(spl0) + filtE2.butbp_do(spl0) + filtE3.butbp_do(spl0) + filtE4.butbp_do(spl0) + filtE5.butbp_do(spl0) + filtE6.butbp_do(spl0) + filtE7.butbp_do(spl0);
+f = filtF0.butbp_do(spl0) + filtF1.butbp_do(spl0) + filtF2.butbp_do(spl0) + filtF3.butbp_do(spl0) + filtF4.butbp_do(spl0) + filtF5.butbp_do(spl0) + filtF6.butbp_do(spl0) + filtF7.butbp_do(spl0);
+g = filtG0.butbp_do(spl0) + filtG1.butbp_do(spl0) + filtG2.butbp_do(spl0) + filtG3.butbp_do(spl0) + filtG4.butbp_do(spl0) + filtG5.butbp_do(spl0) + filtG6.butbp_do(spl0) + filtG7.butbp_do(spl0);
+
+apin.pvin_do(a);
+a = apout.pvout_get_output(apin.count);
+bpin.pvin_do(b);
+b = bpout.pvout_get_output(bpin.count);
+cpin.pvin_do(c);
+c = cpout.pvout_get_output(cpin.count);
+dpin.pvin_do(d);
+d = dpout.pvout_get_output(dpin.count);
+epin.pvin_do(e);
+e = epout.pvout_get_output(epin.count);
+fpin.pvin_do(f);
+f = fpout.pvout_get_output(fpin.count);
+gpin.pvin_do(g);
+g = gpout.pvout_get_output(gpin.count);
+apin.ready ? (
+  apvt.pvtrans_do(apin.magn, apin.freq);
+  apout.pvout_do(apvt.magn, apvt.freq);
+  bpvt.pvtrans_do(bpin.magn, bpin.freq);
+  bpout.pvout_do(bpvt.magn, bpvt.freq);
+  cpvt.pvtrans_do(cpin.magn, cpin.freq);
+  cpout.pvout_do(cpvt.magn, cpvt.freq);
+  dpvt.pvtrans_do(dpin.magn, dpin.freq);
+  dpout.pvout_do(dpvt.magn, dpvt.freq);
+  epvt.pvtrans_do(epin.magn, epin.freq);
+  epout.pvout_do(epvt.magn, epvt.freq);
+  fpvt.pvtrans_do(fpin.magn, fpin.freq);
+  fpout.pvout_do(fpvt.magn, fpvt.freq);
+  gpvt.pvtrans_do(gpin.magn, gpin.freq);
+  gpout.pvout_do(gpvt.magn, gpvt.freq);
+);
+
+spl0 = (a + b + c + d + e + f + g)*0.01*slider1 + lowpass.lop_do(spl0) + hippos.hip_do(spl0);
+spl1 = spl0;
