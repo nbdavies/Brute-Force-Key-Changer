@@ -20,6 +20,7 @@ JSFX plugin (for Reaper), intended for changing the key of a song in realtime. A
 2. Set the target key to the same key.
 3. Set Filter Q to 100.
 4. Leave Transpose at 0.
+
 This will just filter out anything from the original signal that isn't exactly on one of the notes of the scale. For vocals this can give you a stepped vocoder effect. It can help tune your percussion to the key of the song.
 
 ### Relative shift
@@ -27,6 +28,7 @@ This will just filter out anything from the original signal that isn't exactly o
 2. Set the target key to the relative minor (for example, going from C major to A minor).
 3. Set Transpose to -3.
 4. Adjust Filter Q to taste.
+
 This should give you an idea of what the original melody would sound like in a minor key. Specifically in a minor key that would work well with the original key of the song.
 
 ### Horror
@@ -34,4 +36,5 @@ This should give you an idea of what the original melody would sound like in a m
 2. Set the target key to that same key.
 3. Set Filter Q to 100.
 4. If there are vocals present, try low or high Transpose values.
+
 This should produce some unsettling results that bear little resemblance to the music you started with.
